@@ -1,4 +1,4 @@
-# 📊 ReviewAI Pro: SaaS de Análise de Sentimentos
+# 📊 Scanner de Satisfação: Análise de Sentimentos com IA
 
 Este é um projeto **Full Stack** desenvolvido para processar feedbacks de clientes utilizando **Inteligência Artificial (BERT)**, com persistência de dados em **MySQL** e uma interface interativa em **Streamlit**.
 
