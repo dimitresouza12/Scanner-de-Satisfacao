@@ -4,9 +4,10 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime, date
 
-st.set_page_config(page_title="ReviewAI Pro", layout="wide")
+# 1. Configuração da Identidade Visual
+st.set_page_config(page_title="Scanner de Satisfação", layout="wide")
 
-# Estilização do Painel
+# Estilização do Painel (Dark Mode Industrial)
 st.markdown("""
     <style>
     [data-testid="stAppViewContainer"] { background-color: #0e1117; color: #ffffff; }
@@ -19,8 +20,9 @@ MAPA_CORES = {"positivo": "#22c55e", "negativo": "#ef4444", "neutro": "#94a3b8"}
 if 'logado' not in st.session_state:
     st.session_state['logado'] = False
 
+# 2. Tela de Login
 def tela_login():
-    st.title("🔐 Login - ReviewAI Pro")
+    st.title("🔐 Login - Scanner de Satisfação")
     with st.form("login_form"):
         user = st.text_input("Usuário")
         password = st.text_input("Senha", type="password")
@@ -40,29 +42,29 @@ if not st.session_state['logado']:
     st.stop()
 
 # --- DASHBOARD ---
-st.sidebar.title("ReviewAI Dashboard")
+st.sidebar.title("Scanner Dashboard")
 if st.sidebar.button("Sair"):
     st.session_state['logado'] = False
     st.rerun()
 
-tab_analise, tab_historico = st.tabs(["🔍 Nova Análise", "📜 Histórico & Filtros"])
+tab_analise, tab_historico = st.tabs(["🔍 Escaneamento", "📜 Relatórios Históricos"])
 
 with tab_analise:
-    st.title("📊 Painel de Sentimentos")
-    avaliacoes = st.text_area("Insira os textos para análise:", height=150)
+    st.title("📊 Painel de Análise")
+    avaliacoes = st.text_area("Insira os textos para escaneamento:", height=150)
     
-    if st.button("Processar Dados", type="primary"):
+    if st.button("Iniciar Scanner", type="primary"):
         linhas = [l.strip() for l in avaliacoes.split("\n") if l.strip()]
         if linhas:
-            with st.spinner("Analisando..."):
+            with st.spinner("IA Escaneando..."):
                 try:
                     res = httpx.post("http://127.0.0.1:8000/analyze", json={"phrases": linhas})
                     data = res.json()
                     
-                    # Score Card de Alta Visibilidade
+                    # Card de Score de Engenharia
                     st.markdown(f"""
                         <div style="background-color: #0f172a; padding: 25px; border-radius: 12px; border-left: 8px solid #3b82f6; margin-bottom: 30px;">
-                            <h4 style="color: #94a3b8; margin: 0; font-size: 14px; text-transform: uppercase;">Score Geral de Satisfação</h4>
+                            <h4 style="color: #94a3b8; margin: 0; font-size: 14px; text-transform: uppercase;">Índice de Satisfação Escaneado</h4>
                             <span style="color: #ffffff; font-size: 48px; font-weight: 800;">{data['satisfaction_score']} / 100</span>
                         </div>
                     """, unsafe_allow_html=True)
@@ -75,14 +77,13 @@ with tab_analise:
                     st.error("Conexão perdida com o motor de IA.")
 
 with tab_historico:
-    st.header("📜 Relatórios do MySQL")
+    st.header("📜 Histórico do Scanner")
     
-    # Filtros de data
     col1, col2 = st.columns(2)
     d_inicio = col1.date_input("De:", date.today())
     d_fim = col2.date_input("Até:", date.today())
 
-    if st.button("🔍 Sincronizar e Filtrar"):
+    if st.button("🔍 Sincronizar MySQL"):
         try:
             params = {"inicio": d_inicio.isoformat(), "fim": d_fim.isoformat()}
             res = httpx.get("http://127.0.0.1:8000/history", params=params)
@@ -90,9 +91,9 @@ with tab_historico:
             
             if not df_h.empty:
                 csv = df_h.to_csv(index=False).encode('utf-8')
-                st.download_button("📥 Baixar Planilha CSV", csv, "relatorio.csv", "text/csv")
+                st.download_button("📥 Baixar Planilha CSV", csv, "scanner_relatorio.csv", "text/csv")
                 st.dataframe(df_h, use_container_width=True)
             else:
-                st.warning("Sem dados para este período.")
+                st.warning("Nenhum dado encontrado.")
         except:
             st.error("Erro ao acessar o banco de dados.")
