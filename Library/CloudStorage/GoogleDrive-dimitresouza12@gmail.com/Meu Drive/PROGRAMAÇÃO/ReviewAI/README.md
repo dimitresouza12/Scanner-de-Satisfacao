@@ -1,94 +1,68 @@
-# ReviewAI – Análise de Sentimentos (SaaS)
+# 📊 ReviewAI Pro: SaaS de Análise de Sentimentos
 
-API e interface para analisar avaliações de clientes em **português**: sentimento por frase (BERT), palavras-chave (substantivos e adjetivos via spaCy) e score de satisfação 0–100.
+Este é um projeto **Full Stack** desenvolvido para processar feedbacks de clientes utilizando **Inteligência Artificial (BERT)**, com persistência de dados em **MySQL** e uma interface interativa em **Streamlit**.
 
-## Requisitos
+O projeto nasceu da necessidade de transformar dados brutos de texto em métricas de satisfação precisas para tomadas de decisão em negócios.
 
-- Python 3.10+
+## 🛠️ Tecnologias Utilizadas
 
-## Instalação
+| Camada | Tecnologia | Função |
+| :--- | :--- | :--- |
+| **Frontend** | Streamlit | Interface do usuário e visualização de dados. |
+| **Backend** | FastAPI (Python) | Motor da API e processamento lógico. |
+| **IA** | Pysentimiento (BERT) | Modelo de NLP para análise de sentimentos em português. |
+| **Banco de Dados** | MySQL | Armazenamento de usuários e histórico de análises. |
 
-Dependências principais: **pysentimiento** (sentimento em PT), **spacy** (palavras-chave), **plotly**, **httpx**.
+---
 
+## 🧮 Lógica de Engenharia: Score de Satisfação
+
+Diferente de sistemas que apenas contam palavras, o **ReviewAI Pro** aplica uma média ponderada para calcular o **Score Geral de Satisfação**, garantindo que feedbacks neutros tenham o peso correto na saúde do negócio:
+
+**Score** = \frac{(\text{Positivos} \times 100) + (\text{Neutros} \times 50)}{\text{Total de Avaliações}}$$
+
+---
+
+## 🚀 Como Executar o Projeto
+
+### 1. Pré-requisitos
+Certifique-se de ter o Python e o MySQL instalados.
+
+### 2. Configuração do Banco de Dados
+Execute o script contido em `database.sql` no seu gerenciador MySQL para criar as tabelas necessárias.
+
+### 3. Instalação de Dependências
 ```bash
-cd ReviewAI
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
 
-### Modelo spaCy (obrigatório para palavras-chave)
+4. Inicialização
+Abra dois terminais independentes no VS Code e execute os comandos abaixo:
 
-Após o `pip install`, baixe o modelo de português:
+Terminal do Backend:
 
-```bash
-python -m spacy download pt_core_news_sm
-```
+Bash
+uvicorn app:app --reload
 
-**Ou** use o script de setup (instala tudo e baixa o modelo):
-
-```bash
-python setup.py
-# ou (Linux/macOS)
-./setup.sh
-```
-
-## Executar
-
-**1. Backend (terminal 1):**
-
-```bash
-uvicorn app:app --reload --host 127.0.0.1 --port 8000
-```
-
-**2. Interface Streamlit (terminal 2):**
-
-```bash
+Terminal do Frontend:
+Bash
 streamlit run interface.py
-```
 
-- API: **http://localhost:8000** | Docs: **http://localhost:8000/docs**
-- Interface: **http://localhost:8501**
+📜 Funcionalidades do Sistema
+Autenticação de Usuário: Sistema de login com validação direta no MySQL.
 
-## Endpoint `POST /analyze`
+Análise em Tempo Real: Processamento de textos utilizando o modelo BERT para classificar sentimentos (Positivo, Negativo e Neutro).
 
-**Corpo (JSON):**
+Dashboard de BI: Visualização de gráficos de distribuição e o Score Geral de Satisfação em cards de alto contraste.
 
-```json
-{
-  "phrases": [
-    "Comida perfeita, atendimento excelente!",
-    "Demorou muito para chegar.",
-    "Produto ok, preço justo."
-  ]
-}
-```
+Relatórios Históricos: Aba dedicada para consulta de análises passadas com filtros por período de data.
 
-**Resposta:**
+Exportação de Dados: Funcionalidade para baixar o histórico filtrado em formato CSV para análise no Excel ou Numbers.
 
-```json
-{
-  "sentiments": [
-    { "phrase": "Comida perfeita...", "sentiment": "positivo" },
-    { "phrase": "Demorou muito...", "sentiment": "negativo" },
-    { "phrase": "Produto ok...", "sentiment": "neutro" }
-  ],
-  "top_keywords": ["comida", "atendimento", "produto", "preço"],
-  "satisfaction_score": 58.3
-}
-```
+👤 Autor
+Dimitre Souza
 
-- **sentiments**: sentimento de cada frase (`positivo`, `negativo`, `neutro`) via **pysentimiento** (BERT em português).
-- **top_keywords**: até 5 palavras-chave (substantivos e adjetivos) extraídas com **spaCy** `pt_core_news_sm`.
-- **satisfaction_score**: média de satisfação de 0 a 100 com base nas probabilidades do modelo.
+Software Engineering Student (2º Semestre).
 
-## Stack
+LinkedIn: [https://www.linkedin.com/in/dimitre-souza/]
 
-- **Sentimento:** pysentimiento (modelo BERT pré-treinado para português).
-- **Palavras-chave:** spaCy com `pt_core_news_sm` (apenas NOUN, PROPN, ADJ).
-- **Backend:** FastAPI.
-- **Frontend:** Streamlit, Plotly, httpx.
-
-## Health check
-
-- `GET /health` → `{"status": "ok"}`
+Email: dimitresouza12@gmail.com.
