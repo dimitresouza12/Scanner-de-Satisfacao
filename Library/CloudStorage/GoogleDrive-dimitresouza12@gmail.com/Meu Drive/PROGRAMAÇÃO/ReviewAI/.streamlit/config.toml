@@ -1,0 +1,3 @@
+# Evita o prompt de e-mail na primeira execução
+[client]
+showEmailPrompt = false
